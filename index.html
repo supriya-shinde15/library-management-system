@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System | Department of Computer Engineering (OOPSCG)</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Application Shell -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="brand-text">
+            <h2>LibCore Portal</h2>
+            <span class="subtext">SE Comp Engg • OOPSCG</span>
+          </div>
+        </div>
+        <button class="btn-sidebar-close" id="sidebarCloseBtn" aria-label="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="college-badge">
+        <i class="fa-solid fa-building-columns"></i>
+        <div>
+          <strong>College of Engineering & Technology</strong>
+          <small>Dept. of Computer Engineering</small>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-title">MAIN MENU</div>
+        
+        <button class="nav-item active" data-view="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item" data-view="books">
+          <i class="fa-solid fa-book"></i>
+          <span>Book Catalog</span>
+          <span class="nav-badge" id="sidebarBookCount">0</span>
+        </button>
+
+        <button class="nav-item" data-view="students">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span>Student Directory</span>
+          <span class="nav-badge" id="sidebarStudentCount">0</span>
+        </button>
+
+        <div class="nav-group-title">CIRCULATION DESK</div>
+
+        <button class="nav-item" data-view="issue">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          <span>Issue Book</span>
+        </button>
+
+        <button class="nav-item" data-view="return">
+          <i class="fa-solid fa-arrow-down-to-bracket"></i>
+          <span>Return Book & Fines</span>
+          <span class="nav-badge overdue-badge" id="sidebarOverdueCount" style="display:none;">0</span>
+        </button>
+
+        <div class="nav-group-title">REPORTS & ACADEMICS</div>
+
+        <button class="nav-item" data-view="reports">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Reports & Analytics</span>
+        </button>
+
+        <button class="nav-item" data-view="cg-lab">
+          <i class="fa-solid fa-shapes"></i>
+          <span>Computer Graphics Lab</span>
+          <span class="nav-tag">OOPSCG</span>
+        </button>
+
+        <button class="nav-item" data-view="documentation">
+          <i class="fa-solid fa-scroll"></i>
+          <span>Project Documentation</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-indicator"></span>
+          <span>LocalStorage Persistent Mode</span>
+        </div>
+        <div class="student-credit">
+          <small>Academic Project Demo</small>
+          <span>SE Computer Engineering</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-sidebar-toggle" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-title-box">
+            <h1 id="pageTitle">Dashboard Overview</h1>
+            <p id="pageSubtitle">Real-time statistics and circulation summary</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Realtime Date & Clock -->
+          <div class="datetime-pill">
+            <i class="fa-regular fa-clock"></i>
+            <span id="liveDateTime">Loading...</span>
+          </div>
+
+          <!-- Quick Action: Demo Data Reset -->
+          <button class="btn btn-secondary btn-sm" id="btnResetData" title="Reset to default sample books and students">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Reset Demo Data</span>
+          </button>
+
+          <!-- User profile pill -->
+          <div class="user-pill">
+            <div class="avatar">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div class="user-info">
+              <span class="user-name">Librarian Admin</span>
+              <span class="user-role">Dept. of Computer Engg</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- View Container -->
+      <div class="content-container">
+
+        <!-- ==========================================
+             VIEW 1: DASHBOARD
+             ========================================== -->
+        <section class="view-section active" id="view-dashboard">
+          
+          <!-- Key Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card metric-primary">
+              <div class="metric-icon">
+                <i class="fa-solid fa-book-bookmark"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Total Books</span>
+                <h3 class="metric-value" id="dashTotalBooks">0</h3>
+                <span class="metric-meta" id="dashTotalCopies">0 total physical copies</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-success">
+              <div class="metric-icon">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Available Books</span>
+                <h3 class="metric-value" id="dashAvailableBooks">0</h3>
+                <span class="metric-meta">Ready for immediate issue</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-warning">
+              <div class="metric-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Currently Issued</span>
+                <h3 class="metric-value" id="dashIssuedBooks">0</h3>
+                <span class="metric-meta" id="dashOverdueBooks">0 overdue</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-info">
+              <div class="metric-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Registered Students</span>
+                <h3 class="metric-value" id="dashTotalStudents">0</h3>
+                <span class="metric-meta">SE, TE & BE Computer Dept</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons Row -->
+          <div class="quick-action-strip">
+            <span class="quick-label"><i class="fa-solid fa-bolt"></i> Quick Actions:</span>
+            <div class="quick-buttons">
+              <button class="btn btn-primary btn-sm" id="dashQuickAddBook">
+                <i class="fa-solid fa-plus"></i> Add New Book
+              </button>
+              <button class="btn btn-outline btn-sm" id="dashQuickRegStudent">
+                <i class="fa-solid fa-user-plus"></i> Register Student
+              </button>
+              <button class="btn btn-outline btn-sm" id="dashQuickIssue">
+                <i class="fa-solid fa-arrow-up-from-bracket"></i> Issue Book
+              </button>
+              <button class="btn btn-outline btn-sm" id="dashQuickReturn">
+                <i class="fa-solid fa-arrow-down-to-bracket"></i> Return Desk
+              </button>
+            </div>
+          </div>
+
+          <!-- Overdue Alert Notice (Conditional) -->
+          <div class="alert-box alert-danger" id="dashOverdueAlert" style="display:none;">
+            <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+            <div class="alert-content">
+              <strong>Attention Required: Overdue Items Found</strong>
+              <p id="dashOverdueMessage">There are overdue book issues that require returns or fine collection.</p>
+            </div>
+            <button class="btn btn-danger btn-sm" id="dashGoOverdueBtn">View Overdue Items</button>
+          </div>
+
+          <!-- Dashboard Content 2 Columns -->
+          <div class="dashboard-grid">
+            
+            <!-- Left Column: Recently Added Books -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-book-medical text-primary"></i> Recently Added Books</h3>
+                  <p class="card-subtitle">Latest titles registered in the library catalog</p>
+                </div>
+                <button class="btn btn-link btn-sm" data-view-target="books">View Catalog <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="data-table" id="dashRecentBooksTable">
+                    <thead>
+                      <tr>
+                        <th>Book Title & Author</th>
+                        <th>Category</th>
+                        <th>Availability</th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dashRecentBooksBody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Recent Activities -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left text-primary"></i> Recent Library Activities</h3>
+                  <p class="card-subtitle">Real-time audit log of issues, returns, and catalog updates</p>
+                </div>
+                <button class="btn btn-link btn-sm" id="dashClearActivityBtn" title="Clear activity log">Clear Log</button>
+              </div>
+              <div class="card-body">
+                <div class="activity-timeline" id="dashActivityTimeline">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Academic Viva Banner -->
+          <div class="academic-callout">
+            <div class="callout-icon">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div class="callout-body">
+              <h4>Academic Project Concept & Viva Note</h4>
+              <p>This application implements true Object-Oriented Programming (Classes: <code>LibraryItem</code>, <code>Book</code>, <code>Person</code>, <code>Student</code>, <code>LibraryTransaction</code>, <code>Library</code>) demonstrating Encapsulation, Polymorphism, Abstraction, and Inheritance, integrated with an educational Computer Graphics module for Second Year Computer Engineering.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" data-view-target="documentation">Read System Architecture</button>
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 2: BOOK MANAGEMENT
+             ========================================== -->
+        <section class="view-section" id="view-books">
+          
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="filter-toolbar">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="bookSearchInput" placeholder="Search by title, author, ISBN, or Book ID...">
+                  <button class="search-clear-btn" id="bookSearchClear" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="filter-controls">
+                  <select id="bookCategoryFilter" class="select-control">
+                    <option value="">All Categories</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Object Oriented Programming">Object Oriented Programming</option>
+                    <option value="Computer Graphics">Computer Graphics</option>
+                    <option value="Data Structures">Data Structures</option>
+                    <option value="Mathematics">Discrete Mathematics</option>
+                    <option value="Computer Architecture">Computer Architecture</option>
+                    <option value="General Engineering">General Engineering</option>
+                  </select>
+
+                  <select id="bookAvailabilityFilter" class="select-control">
+                    <option value="all">All Statuses</option>
+                    <option value="available">Available in Stock</option>
+                    <option value="out_of_stock">Out of Stock</option>
+                  </select>
+
+                  <button class="btn btn-primary" id="btnOpenAddBookModal">
+                    <i class="fa-solid fa-plus"></i> Add New Book
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Books Table Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3 class="card-title">Book Repository</h3>
+                <span class="badge badge-neutral" id="bookCountBadge">Showing 0 books</span>
+              </div>
+              <div class="card-header-right">
+                <button class="btn btn-outline btn-sm" id="btnExportBooksCSV">
+                  <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table" id="booksTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 100px;">Book ID</th>
+                      <th>Book Details</th>
+                      <th>Author & Publisher</th>
+                      <th>Category</th>
+                      <th>ISBN</th>
+                      <th class="text-center">Total Copies</th>
+                      <th class="text-center">Available</th>
+                      <th>Status</th>
+                      <th class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="booksTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Empty state -->
+              <div class="empty-state" id="booksEmptyState" style="display:none;">
+                <div class="empty-icon"><i class="fa-solid fa-book-skull"></i></div>
+                <h4>No Books Found</h4>
+                <p>No book records match your search or filter criteria.</p>
+                <button class="btn btn-secondary btn-sm" id="btnResetBookFilters">Reset Filters</button>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 3: STUDENT MANAGEMENT
+             ========================================== -->
+        <section class="view-section" id="view-students">
+          
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="filter-toolbar">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="studentSearchInput" placeholder="Search by student name, ID, PRN, or email...">
+                  <button class="search-clear-btn" id="studentSearchClear" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="filter-controls">
+                  <select id="studentDeptFilter" class="select-control">
+                    <option value="">All Departments</option>
+                    <option value="Computer Engineering">Computer Engineering</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="AI & Data Science">AI & Data Science</option>
+                    <option value="Electronics & Telecommunication">E&TC</option>
+                  </select>
+
+                  <select id="studentYearFilter" class="select-control">
+                    <option value="">All Academic Years</option>
+                    <option value="SE">SE (Second Year)</option>
+                    <option value="TE">TE (Third Year)</option>
+                    <option value="BE">BE (Final Year)</option>
+                    <option value="FE">FE (First Year)</option>
+                  </select>
+
+                  <button class="btn btn-primary" id="btnOpenAddStudentModal">
+                    <i class="fa-solid fa-user-plus"></i> Register Student
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Table Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3 class="card-title">Enrolled Student Directory</h3>
+                <span class="badge badge-neutral" id="studentCountBadge">Showing 0 students</span>
+              </div>
+              <div class="card-header-right">
+                <button class="btn btn-outline btn-sm" id="btnExportStudentsCSV">
+                  <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table" id="studentsTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 105px;">Student ID</th>
+                      <th>Student Full Name</th>
+                      <th>Department & Year</th>
+                      <th>PRN / Roll No</th>
+                      <th>Contact Information</th>
+                      <th class="text-center">Issued Books</th>
+                      <th class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentsTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Empty state -->
+              <div class="empty-state" id="studentsEmptyState" style="display:none;">
+                <div class="empty-icon"><i class="fa-solid fa-user-slash"></i></div>
+                <h4>No Students Found</h4>
+                <p>No student records match your search or filter criteria.</p>
+                <button class="btn btn-secondary btn-sm" id="btnResetStudentFilters">Reset Filters</button>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 4: ISSUE BOOK
+             ========================================== -->
+        <section class="view-section" id="view-issue">
+          
+          <div class="grid-split-2">
+            
+            <!-- Left: Issue Book Form Card -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-arrow-up-from-bracket text-primary"></i> Issue Book to Student</h3>
+                  <p class="card-subtitle">Select registered student and available catalog item</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="issueBookForm" novalidate>
+                  
+                  <!-- Select Student -->
+                  <div class="form-group">
+                    <label for="issueStudentSelect" class="form-label">
+                      Select Registered Student <span class="required">*</span>
+                    </label>
+                    <select id="issueStudentSelect" class="form-control" required>
+                      <option value="">-- Choose Student --</option>
+                    </select>
+                    <div class="student-preview-card" id="issueStudentPreview" style="display:none;">
+                      <div class="preview-avatar"><i class="fa-solid fa-user-graduate"></i></div>
+                      <div class="preview-details">
+                        <strong id="previewStudentName">-</strong>
+                        <span id="previewStudentMeta">-</span>
+                        <small id="previewStudentIssuedCount">Currently has 0 books issued</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Select Book -->
+                  <div class="form-group">
+                    <label for="issueBookSelect" class="form-label">
+                      Select Available Book <span class="required">*</span>
+                    </label>
+                    <select id="issueBookSelect" class="form-control" required>
+                      <option value="">-- Choose Book --</option>
+                    </select>
+                    <div class="book-preview-card" id="issueBookPreview" style="display:none;">
+                      <div class="preview-avatar"><i class="fa-solid fa-book"></i></div>
+                      <div class="preview-details">
+                        <strong id="previewBookTitle">-</strong>
+                        <span id="previewBookAuthor">-</span>
+                        <div class="copy-indicator" id="previewBookCopies">-</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dates Row -->
+                  <div class="form-row">
+                    <div class="form-group col-6">
+                      <label for="issueDateInput" class="form-label">
+                        Issue Date <span class="required">*</span>
+                      </label>
+                      <input type="date" id="issueDateInput" class="form-control" required>
+                    </div>
+
+                    <div class="form-group col-6">
+                      <label for="dueDateInput" class="form-label">
+                        Due Date <span class="required">*</span>
+                        <span class="info-tip" title="Standard borrowing period is 14 days">(14 Days)</span>
+                      </label>
+                      <input type="date" id="dueDateInput" class="form-control" required>
+                    </div>
+                  </div>
+
+                  <!-- Issue Remarks -->
+                  <div class="form-group">
+                    <label for="issueRemarksInput" class="form-label">Remarks / Purpose (Optional)</label>
+                    <input type="text" id="issueRemarksInput" class="form-control" placeholder="e.g. OOPSCG Semester Reference, Mini Project">
+                  </div>
+
+                  <!-- Form Actions -->
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block" id="btnSubmitIssue">
+                      <i class="fa-solid fa-arrow-up-from-bracket"></i> Complete Book Issue
+                    </button>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+
+            <!-- Right: Currently Issued Books List -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-list-check text-primary"></i> Currently Active Issues</h3>
+                  <p class="card-subtitle">All active borrowings currently in circulation</p>
+                </div>
+                <span class="badge badge-primary" id="activeIssueCountBadge">0 Active</span>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive max-h-500">
+                  <table class="data-table" id="activeIssueTable">
+                    <thead>
+                      <tr>
+                        <th>Book & Student</th>
+                        <th>Issue / Due Date</th>
+                        <th>Status</th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="activeIssueTableBody">
+                      <!-- Dynamic Rows -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="empty-state" id="activeIssueEmptyState" style="display:none;">
+                  <div class="empty-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                  <h4>No Active Issues</h4>
+                  <p>All library books are currently returned to the shelves.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 5: RETURN BOOK & FINES
+             ========================================== -->
+        <section class="view-section" id="view-return">
+          
+          <div class="grid-split-2">
+            
+            <!-- Left: Return Process & Fine Calculator -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-arrow-down-to-bracket text-primary"></i> Process Book Return</h3>
+                  <p class="card-subtitle">Calculate overdue duration and automated late fine</p>
+                </div>
+              </div>
+              <div class="card-body">
+                
+                <!-- Quick Issue Selector -->
+                <div class="form-group">
+                  <label for="returnTransactionSelect" class="form-label">
+                    Select Active Issue to Return <span class="required">*</span>
+                  </label>
+                  <select id="returnTransactionSelect" class="form-control">
+                    <option value="">-- Select Active Issue Record --</option>
+                  </select>
+                </div>
+
+                <!-- Live Return Calculation Sheet -->
+                <div class="calculation-sheet" id="returnCalcSheet" style="display:none;">
+                  <div class="sheet-header">
+                    <h4><i class="fa-solid fa-receipt"></i> Circulation Clearance Preview</h4>
+                    <span class="badge badge-info" id="sheetTxnId">TXN-0000</span>
+                  </div>
+
+                  <div class="sheet-grid">
+                    <div class="sheet-item">
+                      <span class="sheet-label">Book Title</span>
+                      <strong class="sheet-val" id="sheetBookTitle">-</strong>
+                    </div>
+                    <div class="sheet-item">
+                      <span class="sheet-label">Issued To Student</span>
+                      <strong class="sheet-val" id="sheetStudentName">-</strong>
+                    </div>
+                    <div class="sheet-item">
+                      <span class="sheet-label">Issue Date</span>
+                      <span class="sheet-val" id="sheetIssueDate">-</span>
+                    </div>
+                    <div class="sheet-item">
+                      <span class="sheet-label">Due Date</span>
+                      <span class="sheet-val text-warning" id="sheetDueDate">-</span>
+                    </div>
+                  </div>
+
+                  <!-- Return Date Picker to test late fines -->
+                  <div class="form-group mt-3">
+                    <label for="returnDateInput" class="form-label">Actual Return Date</label>
+                    <input type="date" id="returnDateInput" class="form-control">
+                    <small class="form-help text-muted">You can adjust this date to simulate overdue returns and test fine calculations.</small>
+                  </div>
+
+                  <!-- Fine Assessment Box -->
+                  <div class="fine-assessment-box" id="fineBox">
+                    <div class="fine-row">
+                      <span>Borrowing Duration:</span>
+                      <strong id="fineDaysTotal">0 days</strong>
+                    </div>
+                    <div class="fine-row">
+                      <span>Overdue Duration:</span>
+                      <strong id="fineDaysOverdue" class="text-danger">0 days</strong>
+                    </div>
+                    <div class="fine-row">
+                      <span>Configured Fine Rate:</span>
+                      <span>₹5.00 / day <small class="text-muted">(Configurable Demo Value)</small></span>
+                    </div>
+                    <div class="fine-total-row">
+                      <span>Total Late Fine Due:</span>
+                      <span class="fine-amount-badge" id="fineTotalAmount">₹0.00</span>
+                    </div>
+                  </div>
+
+                  <div class="fine-disclaimer">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span><strong>Academic Note:</strong> Late fines adhere to university central library guidelines (₹5/day after 14 days grace period). Amount is a configurable demo parameter.</span>
+                  </div>
+
+                  <div class="form-actions mt-4">
+                    <button type="button" class="btn btn-success btn-block" id="btnConfirmReturn">
+                      <i class="fa-solid fa-check-double"></i> Confirm Return & Restock Copies
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Prompt when no item selected -->
+                <div class="placeholder-prompt" id="returnSelectPrompt">
+                  <i class="fa-solid fa-hand-pointer"></i>
+                  <h4>Select an Issued Book</h4>
+                  <p>Choose an issued transaction from the dropdown above or click "Return" in the active issues table to calculate clearance and fines.</p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Right: All Issues List with Overdue Highlights -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-clock text-primary"></i> Pending Returns Desk</h3>
+                  <p class="card-subtitle">Real-time status of all borrowed items</p>
+                </div>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive max-h-550">
+                  <table class="data-table" id="returnActiveTable">
+                    <thead>
+                      <tr>
+                        <th>Book / Student</th>
+                        <th>Due Date</th>
+                        <th>Days Left / Overdue</th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="returnActiveTableBody">
+                      <!-- Dynamic Rows -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="empty-state" id="returnEmptyState" style="display:none;">
+                  <div class="empty-icon"><i class="fa-solid fa-circle-check"></i></div>
+                  <h4>Zero Outstanding Issues</h4>
+                  <p>All books have been successfully returned.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 6: SEARCH & REPORTS
+             ========================================== -->
+        <section class="view-section" id="view-reports">
+          
+          <div class="card mb-4 no-print">
+            <div class="card-body">
+              <div class="reports-header-flex">
+                <div class="report-tabs">
+                  <button class="report-tab-btn active" data-report-type="all">
+                    <i class="fa-solid fa-book-open"></i> All Catalog Books
+                  </button>
+                  <button class="report-tab-btn" data-report-type="available">
+                    <i class="fa-solid fa-circle-check"></i> Available In Stock
+                  </button>
+                  <button class="report-tab-btn" data-report-type="issued">
+                    <i class="fa-solid fa-book-reader"></i> Currently Issued
+                  </button>
+                  <button class="report-tab-btn" data-report-type="overdue">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Overdue Issues
+                  </button>
+                  <button class="report-tab-btn" data-report-type="history">
+                    <i class="fa-solid fa-timeline"></i> Complete History Log
+                  </button>
+                </div>
+
+                <div class="report-actions">
+                  <button class="btn btn-primary" id="btnPrintReport">
+                    <i class="fa-solid fa-print"></i> Print Official Report
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Printable Report Container -->
+          <div class="card report-printable-card" id="printableReportCard">
+            <!-- Official Print Header (Only visible on print / preview) -->
+            <div class="print-official-header">
+              <div class="print-header-top">
+                <div class="univ-logo-print">
+                  <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="univ-details-print">
+                  <h2>COLLEGE OF ENGINEERING & TECHNOLOGY</h2>
+                  <h3>DEPARTMENT OF COMPUTER ENGINEERING</h3>
+                  <p>Academic Year 2026-2027 • Course: OOPSCG (210243/210250)</p>
+                  <h4>CENTRAL LIBRARY AUTOMATION & CIRCULATION REPORT</h4>
+                </div>
+              </div>
+              <div class="print-meta-bar">
+                <span><strong>Report Title:</strong> <span id="printReportTitle">All Books Catalog</span></span>
+                <span><strong>Generated On:</strong> <span id="printReportDate">-</span></span>
+                <span><strong>Authorized By:</strong> Head of Department / Librarian</span>
+              </div>
+            </div>
+
+            <!-- Report Summary Cards Bar -->
+            <div class="report-summary-bar no-print">
+              <div class="summary-chip">
+                <span>Total Items in Report:</span>
+                <strong id="reportTotalItems">0</strong>
+              </div>
+              <div class="summary-chip">
+                <span>Catalog Physical Copies:</span>
+                <strong id="reportTotalCopies">0</strong>
+              </div>
+              <div class="summary-chip">
+                <span>Active Issues:</span>
+                <strong id="reportActiveCount">0</strong>
+              </div>
+              <div class="summary-chip">
+                <span>Total Fines Recorded:</span>
+                <strong id="reportFinesSum">₹0.00</strong>
+              </div>
+            </div>
+
+            <!-- Report Content Area -->
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table" id="reportDataTable">
+                  <thead id="reportTableHead">
+                    <!-- Dynamic Headers based on report type -->
+                  </thead>
+                  <tbody id="reportTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="empty-state" id="reportEmptyState" style="display:none;">
+                <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+                <h4>No Records for Selected Report</h4>
+                <p>There are no items matching this report's criteria.</p>
+              </div>
+            </div>
+
+            <!-- Official Print Signatures Footer -->
+            <div class="print-official-footer">
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <span>Prepared By (Student)</span>
+                <small>SE Computer Engineering</small>
+              </div>
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <span>College Librarian</span>
+                <small>Central Library Incharge</small>
+              </div>
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <span>Head of Department</span>
+                <small>Department of Computer Engineering</small>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 7: COMPUTER GRAPHICS LAB (OOPSCG)
+             ========================================== -->
+        <section class="view-section" id="view-cg-lab">
+          
+          <!-- Section Banner -->
+          <div class="cg-hero-banner mb-4">
+            <div class="cg-hero-content">
+              <div class="cg-badge"><i class="fa-solid fa-microchip"></i> CURRICULUM INTEGRATION</div>
+              <h2>Computer Graphics & 2D Transformations Lab</h2>
+              <p>Demonstrating curriculum concepts from <strong>OOPSCG (Course Code: 210243/210250)</strong>: 2D Screen Coordinate Systems, Raster Scan Pixel Matrix, DDA Line Generation, and Homogeneous Matrix Transformations.</p>
+            </div>
+            <div class="cg-hero-stats">
+              <div class="stat-box">
+                <span>Canvas Origin</span>
+                <strong>(0, 0) Top-Left</strong>
+              </div>
+              <div class="stat-box">
+                <span>Matrix Dim</span>
+                <strong>3 × 3 Homogeneous</strong>
+              </div>
+              <div class="stat-box">
+                <span>Algorithm</span>
+                <strong>DDA & Bresenham</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- CG Interactive Tabs -->
+          <div class="cg-nav-tabs mb-4">
+            <button class="cg-tab-btn active" data-cg-tab="transforms">
+              <i class="fa-solid fa-arrows-up-down-left-right"></i> 1. 2D Geometric Transformations
+            </button>
+            <button class="cg-tab-btn" data-cg-tab="dda">
+              <i class="fa-solid fa-chart-line"></i> 2. DDA Line Rasterization Engine
+            </button>
+            <button class="cg-tab-btn" data-cg-tab="colors">
+              <i class="fa-solid fa-palette"></i> 3. Color Depth & Framebuffer Theory
+            </button>
+          </div>
+
+          <!-- TAB 1: 2D GEOMETRIC TRANSFORMATIONS -->
+          <div class="cg-tab-content active" id="cg-tab-transforms">
+            <div class="grid-split-2">
+              
+              <!-- Left: Canvas Renderer -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title"><i class="fa-solid fa-display text-primary"></i> 2D Cartesian / Canvas Coordinate Space</h3>
+                    <p class="card-subtitle">Origin (0,0) at top-left; X increases rightward, Y increases downward</p>
+                  </div>
+                  <button class="btn btn-outline btn-sm" id="btnResetTransform">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Transformation
+                  </button>
+                </div>
+                <div class="card-body text-center p-3">
+                  <div class="canvas-wrapper">
+                    <canvas id="cgTransformCanvas" width="560" height="420"></canvas>
+                  </div>
+                  <div class="canvas-coords-footer">
+                    <span>Current Cursor: <strong id="cgCanvasCoordX">0</strong>, <strong id="cgCanvasCoordY">0</strong> px</span>
+                    <span class="text-muted">Object: Interactive Vector Book & Geometry</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Matrix Controls & Equations -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title"><i class="fa-solid fa-sliders text-primary"></i> Transformation Controls & 3×3 Matrix</h3>
+                    <p class="card-subtitle">Real-time Homogeneous Coordinate Matrix computation</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  
+                  <!-- Translation Controls -->
+                  <div class="control-section">
+                    <div class="section-title-cg">
+                      <span><strong>Translation:</strong> \( [x', y', 1] = [x, y, 1] \cdot \mathbf{T}(t_x, t_y) \)</span>
+                    </div>
+                    <div class="slider-row">
+                      <label>Translate X (\(t_x\)): <strong id="valTx">0</strong> px</label>
+                      <input type="range" id="sliderTx" min="-150" max="150" value="0" class="range-slider">
+                    </div>
+                    <div class="slider-row">
+                      <label>Translate Y (\(t_y\)): <strong id="valTy">0</strong> px</label>
+                      <input type="range" id="sliderTy" min="-150" max="150" value="0" class="range-slider">
+                    </div>
+                  </div>
+
+                  <!-- Rotation Controls -->
+                  <div class="control-section">
+                    <div class="section-title-cg">
+                      <span><strong>Rotation:</strong> Counter-clockwise angle \(\theta\)</span>
+                    </div>
+                    <div class="slider-row">
+                      <label>Rotation (\(\theta\)): <strong id="valRot">0</strong>°</label>
+                      <input type="range" id="sliderRot" min="-180" max="180" value="0" class="range-slider">
+                    </div>
+                  </div>
+
+                  <!-- Scaling Controls -->
+                  <div class="control-section">
+                    <div class="section-title-cg">
+                      <span><strong>Scaling:</strong> Scale factor \(S_x, S_y\)</span>
+                    </div>
+                    <div class="slider-row">
+                      <label>Scale Factor (\(S\)): <strong id="valScale">1.0</strong>x</label>
+                      <input type="range" id="sliderScale" min="0.4" max="2.0" step="0.1" value="1.0" class="range-slider">
+                    </div>
+                  </div>
+
+                  <!-- Shear Controls -->
+                  <div class="control-section">
+                    <div class="section-title-cg">
+                      <span><strong>Shearing:</strong> Distortion along axes</span>
+                    </div>
+                    <div class="slider-row">
+                      <label>Shear X (\(Sh_x\)): <strong id="valShx">0.0</strong></label>
+                      <input type="range" id="sliderShx" min="-1.0" max="1.0" step="0.1" value="0" class="range-slider">
+                    </div>
+                  </div>
+
+                  <!-- Live 3x3 Matrix Math Card -->
+                  <div class="matrix-card">
+                    <h4>Current 3×3 Homogeneous Transformation Matrix</h4>
+                    <div class="matrix-formula" id="cgMatrixDisplay">
+                      <!-- Rendered dynamically -->
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TAB 2: DDA LINE DRAWING ENGINE -->
+          <div class="cg-tab-content" id="cg-tab-dda">
+            <div class="grid-split-2">
+              
+              <!-- Left: Pixel Grid Canvas -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title"><i class="fa-solid fa-border-all text-primary"></i> Raster Scan Pixel Grid Simulation</h3>
+                    <p class="card-subtitle">Magnified 20x pixel grid visualizing discrete coordinate quantization</p>
+                  </div>
+                </div>
+                <div class="card-body text-center p-3">
+                  <div class="canvas-wrapper">
+                    <canvas id="cgDdaCanvas" width="560" height="420"></canvas>
+                  </div>
+                  <div class="canvas-coords-footer">
+                    <span class="text-success"><i class="fa-solid fa-square"></i> Green: Start Point</span>
+                    <span class="text-primary"><i class="fa-solid fa-square"></i> Blue: Rasterized Pixels</span>
+                    <span class="text-danger"><i class="fa-solid fa-square"></i> Red: End Point</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: DDA Math & Step Calculator -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title"><i class="fa-solid fa-calculator text-primary"></i> DDA Algorithm Walkthrough</h3>
+                    <p class="card-subtitle">Digital Differential Analyzer step-by-step table</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="form-row">
+                    <div class="col-6">
+                      <label class="form-label">Point 1 (\(x_1, y_1\))</label>
+                      <div class="d-flex gap-2">
+                        <input type="number" id="ddaX1" class="form-control" value="2" min="0" max="27">
+                        <input type="number" id="ddaY1" class="form-control" value="3" min="0" max="20">
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Point 2 (\(x_2, y_2\))</label>
+                      <div class="d-flex gap-2">
+                        <input type="number" id="ddaX2" class="form-control" value="24" min="0" max="27">
+                        <input type="number" id="ddaY2" class="form-control" value="16" min="0" max="20">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                    <button class="btn btn-primary btn-sm" id="btnCalculateDDA">
+                      <i class="fa-solid fa-play"></i> Compute & Render DDA Steps
+                    </button>
+                    <span class="text-muted" id="ddaStatsText">Steps: 22</span>
+                  </div>
+
+                  <!-- Step Table -->
+                  <div class="table-responsive max-h-350">
+                    <table class="data-table" id="ddaStepTable">
+                      <thead>
+                        <tr>
+                          <th>Iteration \(k\)</th>
+                          <th>Exact \(X_k\)</th>
+                          <th>Exact \(Y_k\)</th>
+                          <th>Plotted Pixel \((x, y)\)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="ddaStepTableBody">
+                        <!-- Dynamic Steps -->
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="educational-note mt-3">
+                    <small><strong>DDA Formulation:</strong> \(\Delta x = x_2 - x_1\), \(\Delta y = y_2 - y_1\). \(\text{steps} = \max(|\Delta x|, |\Delta y|)\). Increment: \(x_{inc} = \Delta x / \text{steps}\), \(y_{inc} = \Delta y / \text{steps}\). Plotted coordinate \((x, y) = (\text{round}(X), \text{round}(Y))\).</small>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TAB 3: COLOR MODELS & FRAMEBUFFER THEORY -->
+          <div class="cg-tab-content" id="cg-tab-colors">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-palette text-primary"></i> Color Representation in Graphical Displays</h3>
+                  <p class="card-subtitle">RGB additive color mixing, 24-bit TrueColor framebuffer storage, and alpha compositing</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="grid-split-2">
+                  <!-- Interactive Color Mixer -->
+                  <div class="color-mixer-box">
+                    <h4>Interactive 24-bit RGB Framebuffer Mixer</h4>
+                    
+                    <div class="color-preview-swatch" id="colorSwatch">
+                      <span id="colorSwatchHex">#2563EB</span>
+                    </div>
+
+                    <div class="slider-row mt-3">
+                      <label><span class="badge badge-danger">Red (R)</span> Value: <strong id="valColorR">37</strong> (8-bit: 00100101)</label>
+                      <input type="range" id="sliderColorR" min="0" max="255" value="37" class="range-slider slider-red">
+                    </div>
+
+                    <div class="slider-row">
+                      <label><span class="badge badge-success">Green (G)</span> Value: <strong id="valColorG">99</strong> (8-bit: 01100011)</label>
+                      <input type="range" id="sliderColorG" min="0" max="255" value="99" class="range-slider slider-green">
+                    </div>
+
+                    <div class="slider-row">
+                      <label><span class="badge badge-primary">Blue (B)</span> Value: <strong id="valColorB">235</strong> (8-bit: 11101011)</label>
+                      <input type="range" id="sliderColorB" min="0" max="255" value="235" class="range-slider slider-blue">
+                    </div>
+                  </div>
+
+                  <!-- Framebuffer Memory Layout -->
+                  <div class="framebuffer-info-box">
+                    <h4>Video Memory (VRAM) Framebuffer Architecture</h4>
+                    <p>In modern computer graphics displays (CRT, LCD, OLED), each raster pixel is mapped directly to consecutive bytes in the video controller's frame buffer memory:</p>
+                    
+                    <div class="memory-byte-strip">
+                      <div class="mem-byte byte-r">
+                        <span>Byte 0 [R]</span>
+                        <strong id="byteHexR">25</strong>
+                      </div>
+                      <div class="mem-byte byte-g">
+                        <span>Byte 1 [G]</span>
+                        <strong id="byteHexG">63</strong>
+                      </div>
+                      <div class="mem-byte byte-b">
+                        <span>Byte 2 [B]</span>
+                        <strong id="byteHexB">EB</strong>
+                      </div>
+                      <div class="mem-byte byte-a">
+                        <span>Byte 3 [A]</span>
+                        <strong>FF (255)</strong>
+                      </div>
+                    </div>
+
+                    <ul class="cg-bullet-list mt-3">
+                      <li><strong>Color Depth:</strong> 24-bit TrueColor generates \(2^{24} = 16,777,216\) distinct colors.</li>
+                      <li><strong>Screen Resolution Calculation:</strong> A 1920×1080 display requires:
+                        <br><code>1920 × 1080 × 4 bytes = 8,294,400 bytes ≈ 7.91 MB VRAM per frame</code>.</li>
+                      <li><strong>DOM Rendering Engine:</strong> CSS color parsing internally converts Hex/HSL into 32-bit RGBA integer values before GPU rasterization.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             VIEW 8: PROJECT DOCUMENTATION
+             ========================================== -->
+        <section class="view-section" id="view-documentation">
+          
+          <div class="card documentation-card">
+            <div class="card-header doc-hero">
+              <div class="doc-hero-badge">DEPARTMENT OF COMPUTER ENGINEERING • SE</div>
+              <h2>Laboratory Mini-Project Academic Documentation</h2>
+              <p>Subject: <strong>Object Oriented Programming and Computer Graphics (OOPSCG)</strong> | Course Code: <strong>210243 / 210250</strong></p>
+            </div>
+            
+            <div class="card-body doc-content">
+              
+              <!-- Doc Section 1 -->
+              <article class="doc-article">
+                <h3>1. Abstract</h3>
+                <p>The <strong>Library Management System (LMS)</strong> is an interactive, enterprise-grade web application developed as an academic mini-project for Second Year Computer Engineering students. The system eliminates manual library paper registries by automating cataloging, student enrolment, book circulation (issues and returns), and late fee computation. The system demonstrates rigorous <strong>Object-Oriented Programming (OOP)</strong> paradigms implemented natively in JavaScript (ES6+), coupled with an educational <strong>Computer Graphics (CG)</strong> module connecting real-world UI graphics with core curriculum algorithms like 2D transformations, homogeneous coordinates, and raster scan mechanics.</p>
+              </article>
+
+              <!-- Doc Section 2 -->
+              <article class="doc-article">
+                <h3>2. Introduction & University Curriculum Context</h3>
+                <p>In the Computer Engineering Syllabus, the course <em>Object Oriented Programming & Computer Graphics (OOPSCG)</em> bridges algorithmic software design with visual computational geometry. This project serves as an end-to-end practical realization of these dual pillars: utilizing OOP design patterns for reliable, maintainable business logic while demonstrating how graphical screen rendering operates at the mathematical and pixel levels.</p>
+              </article>
+
+              <!-- Doc Section 3 -->
+              <article class="doc-article">
+                <h3>3. Problem Statement</h3>
+                <p>Conventional college libraries face issues including misplaced books, lack of real-time availability tracking, inaccurate calculation of overdue penalties, and cumbersome paper ledgers. The goal is to engineer a responsive, client-side, zero-server-dependency Library Management System that persists state seamlessly using Web LocalStorage while illustrating robust OOP architecture and computer graphics principles.</p>
+              </article>
+
+              <!-- Doc Section 4 -->
+              <article class="doc-article">
+                <h3>4. Objectives</h3>
+                <ul class="doc-list">
+                  <li>To architect a modern, responsive web dashboard with clean blue-and-white university aesthetics.</li>
+                  <li>To implement full CRUD operations (Create, Read, Update, Delete) for Books and Students with real-time validation.</li>
+                  <li>To automate book circulation with automated inventory decrements/increments and overdue late fine evaluation.</li>
+                  <li>To demonstrate core OOP principles: Classes, Objects, Constructors, Encapsulation, Inheritance, Polymorphism, and Abstraction.</li>
+                  <li>To provide interactive Computer Graphics experiments mapping theoretical 2D transformations and DDA rasterization directly to browser canvas graphics.</li>
+                  <li>To implement persistent data storage using browser LocalStorage with automatic fallback and sample seeding.</li>
+                </ul>
+              </article>
+
+              <!-- Doc Section 5 -->
+              <article class="doc-article">
+                <h3>5. System Scope</h3>
+                <p>The application encompasses library administration within an academic department: catalog maintenance, student member registration, active issue tracking, fine receipts, tabular search/filtering, printable university-format reports, and an educational graphics laboratory. It is entirely portable, needing no backend servers, databases, or npm dependencies.</p>
+              </article>
+
+              <!-- Doc Section 6 -->
+              <article class="doc-article">
+                <h3>6. Hardware & Software Requirements</h3>
+                <div class="grid-split-2">
+                  <div class="spec-box">
+                    <h4>Hardware Requirements</h4>
+                    <ul>
+                      <li><strong>Processor:</strong> Dual-core 1.5 GHz or higher (Intel/AMD/ARM)</li>
+                      <li><strong>RAM:</strong> 2 GB minimum (4 GB recommended)</li>
+                      <li><strong>Storage:</strong> 20 MB free disk space</li>
+                      <li><strong>Display:</strong> 1024×768 resolution minimum (Fully responsive for mobile screens)</li>
+                    </ul>
+                  </div>
+                  <div class="spec-box">
+                    <h4>Software Requirements</h4>
+                    <ul>
+                      <li><strong>Operating System:</strong> Windows 10/11, Ubuntu/Linux, macOS</li>
+                      <li><strong>Runtime Engine:</strong> Any modern browser supporting ECMAScript 2020+ (Google Chrome, Firefox, MS Edge, Safari)</li>
+                      <li><strong>Technologies:</strong> HTML5, CSS3 (Custom Properties & Flexbox/Grid), JavaScript ES6+</li>
+                      <li><strong>Storage Engine:</strong> W3C Web Storage API (LocalStorage)</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Doc Section 7 -->
+              <article class="doc-article">
+                <h3>7. System Design & Class Hierarchy (OOP Architecture)</h3>
+                <p>The software architecture strictly adheres to Object-Oriented principles. Below is the structural class hierarchy:</p>
+                
+                <div class="class-diagram-box">
+                  <div class="class-box">
+                    <div class="class-title">&laquo;abstract&raquo; LibraryItem</div>
+                    <div class="class-attrs">
+                      - _id: string<br>
+                      - _title: string<br>
+                      - _addedDate: string
+                    </div>
+                    <div class="class-methods">
+                      + get id(): string<br>
+                      + get title(): string<br>
+                      + getDetails(): string [abstract]
+                    </div>
+                  </div>
+
+                  <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i> inherits</div>
+
+                  <div class="class-box">
+                    <div class="class-title">Book (extends LibraryItem)</div>
+                    <div class="class-attrs">
+                      - _author: string<br>
+                      - _isbn: string<br>
+                      - _category: string<br>
+                      - _publisher: string<br>
+                      - _totalCopies: number<br>
+                      - _availableCopies: number
+                    </div>
+                    <div class="class-methods">
+                      + isAvailable(): boolean<br>
+                      + decrementCopies(): boolean<br>
+                      + incrementCopies(): void<br>
+                      + getDetails(): string [polymorphism]<br>
+                      + toJSON(): object
+                    </div>
+                  </div>
+                </div>
+
+                <div class="class-diagram-box mt-4">
+                  <div class="class-box">
+                    <div class="class-title">Person</div>
+                    <div class="class-attrs">
+                      - _id: string<br>
+                      - _name: string<br>
+                      - _email: string<br>
+                      - _phone: string
+                    </div>
+                    <div class="class-methods">
+                      + getRole(): string<br>
+                      + getDetails(): string
+                    </div>
+                  </div>
+
+                  <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i> inherits</div>
+
+                  <div class="class-box">
+                    <div class="class-title">Student (extends Person)</div>
+                    <div class="class-attrs">
+                      - _department: string<br>
+                      - _year: string (SE/TE/BE)<br>
+                      - _prn: string (Student PRN)<br>
+                      - _rollNo: string<br>
+                      - _issuedBooksCount: number
+                    </div>
+                    <div class="class-methods">
+                      + getRole(): string [polymorphic override]<br>
+                      + getDetails(): string [polymorphic override]<br>
+                      + toJSON(): object
+                    </div>
+                  </div>
+                </div>
+
+                <div class="class-diagram-box mt-4">
+                  <div class="class-box">
+                    <div class="class-title">Library (Facade & Central Manager)</div>
+                    <div class="class-attrs">
+                      - _books: Map&lt;string, Book&gt;<br>
+                      - _students: Map&lt;string, Student&gt;<br>
+                      - _transactions: Map&lt;string, LibraryTransaction&gt;<br>
+                      - _activityLog: Array&lt;object&gt;<br>
+                      - _storageKey: string
+                    </div>
+                    <div class="class-methods">
+                      + addBook(data): Book<br>
+                      + updateBook(id, data): Book<br>
+                      + deleteBook(id): boolean<br>
+                      + registerStudent(data): Student<br>
+                      + updateStudent(id, data): Student<br>
+                      + deleteStudent(id): boolean<br>
+                      + issueBook(studentId, bookId, dueDate): LibraryTransaction<br>
+                      + returnBook(txnId, returnDate): object<br>
+                      + saveToStorage(): void<br>
+                      + loadFromStorage(): boolean
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Doc Section 8 -->
+              <article class="doc-article">
+                <h3>8. OOP Concepts Demonstrated in Code</h3>
+                <div class="oop-grid">
+                  <div class="oop-card">
+                    <h4><i class="fa-solid fa-cube"></i> Classes & Objects</h4>
+                    <p>ES6 <code>class</code> syntax encapsulates data and functions into cohesive instances (e.g. creating <code>new Book(...)</code> and <code>new Student(...)</code>).</p>
+                  </div>
+                  <div class="oop-card">
+                    <h4><i class="fa-solid fa-lock"></i> Encapsulation</h4>
+                    <p>Internal object states are stored in protected/private fields (prefixed with <code>_</code>) with controlled accessors (getters) and mutating methods enforcing state validation (e.g. preventing negative copy counts).</p>
+                  </div>
+                  <div class="oop-card">
+                    <h4><i class="fa-solid fa-sitemap"></i> Inheritance</h4>
+                    <p>Code reuse through parent-child relationships: <code>Book</code> extends <code>LibraryItem</code>, and <code>Student</code> extends <code>Person</code> using the <code>extends</code> and <code>super()</code> keywords.</p>
+                  </div>
+                  <div class="oop-card">
+                    <h4><i class="fa-solid fa-masks-theater"></i> Polymorphism</h4>
+                    <p>Subclasses override base class methods like <code>getDetails()</code> and <code>getRole()</code> to supply specialized implementations tailored to Books and Students while sharing a common interface.</p>
+                  </div>
+                  <div class="oop-card">
+                    <h4><i class="fa-solid fa-eye-slash"></i> Abstraction</h4>
+                    <p>Complex business rules (such as inventory adjustments, overdue fine algorithms, and LocalStorage JSON serialization) are hidden behind intuitive public methods like <code>library.issueBook()</code> and <code>library.returnBook()</code>.</p>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Doc Section 9 -->
+              <article class="doc-article">
+                <h3>9. Connection to Computer Graphics (OOPSCG)</h3>
+                <p>The user interface inherently relies upon foundational computer graphics concepts taught in the Computer Graphics syllabus:</p>
+                <ul class="doc-list">
+                  <li><strong>2D Screen Coordinate System:</strong> Unlike standard Cartesian coordinates where origin (0,0) is at the center or bottom-left, display monitors and HTML5 Canvas locate (0,0) at the top-left, where \(X\) increases to the right and \(Y\) increases downwards.</li>
+                  <li><strong>Homogeneous Coordinates & 3×3 Matrices:</strong> All affine transformations (Translation, Scaling, Rotation, Shearing) are represented using \(3 \times 3\) matrices, allowing complex multi-step transformations to be concatenated through matrix multiplication:
+                    <br><code>P' = P × M_composite</code>.</li>
+                  <li><strong>Rasterization & DDA Algorithm:</strong> Digital Differential Analyzer evaluates intermediate pixel values using line differential steps \(\Delta x\) and \(\Delta y\), illustrating how software algorithms bridge mathematical vectors into discrete screen pixels.</li>
+                  <li><strong>Color Depth in VRAM:</strong> The blue-and-white theme is rendered through 24-bit TrueColor RGBA memory buffers inside the graphics pipeline.</li>
+                </ul>
+              </article>
+
+              <!-- Doc Section 10 -->
+              <article class="doc-article">
+                <h3>10. Advantages</h3>
+                <ul class="doc-list">
+                  <li><strong>Zero Backend Setup:</strong> Runs out-of-the-box on any browser with zero installation, npm packages, or server configuration.</li>
+                  <li><strong>Data Persistence:</strong> State persists across page refreshes and browser restarts via HTML5 LocalStorage.</li>
+                  <li><strong>Academic Alignment:</strong> Directly addresses Second Year Computer Engineering viva questions and syllabus requirements.</li>
+                  <li><strong>Print-Ready Reporting:</strong> Formatted print stylesheets allow instant generation of official department reports with signature blocks.</li>
+                </ul>
+              </article>
+
+              <!-- Doc Section 11 -->
+              <article class="doc-article">
+                <h3>11. Limitations</h3>
+                <ul class="doc-list">
+                  <li>Browser LocalStorage is domain-bound and typically limited to ~5MB of JSON data.</li>
+                  <li>Multi-user concurrency across different physical computers requires a central backend/cloud database.</li>
+                  <li>Does not feature physical hardware barcode/RFID scanner drivers directly.</li>
+                </ul>
+              </article>
+
+              <!-- Doc Section 12 -->
+              <article class="doc-article">
+                <h3>12. Future Scope</h3>
+                <ul class="doc-list">
+                  <li>Integration with Barcode / QR Code camera scanners for high-speed book checkout.</li>
+                  <li>Backend API connection with Node.js/Express and MongoDB or PostgreSQL for multi-campus networking.</li>
+                  <li>Automated SMS and email reminders to students 2 days prior to the due date.</li>
+                  <li>Student self-service mobile app portal to check issued books and digital library ID.</li>
+                </ul>
+              </article>
+
+              <!-- Doc Section 13 -->
+              <article class="doc-article">
+                <h3>13. Conclusion</h3>
+                <p>The Central Library Management System successfully implements a robust, maintainable, and visually polished software application. It validates core software engineering principles including modular class architecture, event-driven reactive user interfaces, persistent client storage, and mathematical graphics rendering, providing second-year engineering students with an exemplary mini-project for laboratory evaluation.</p>
+              </article>
+
+              <!-- Doc Section 14 -->
+              <article class="doc-article">
+                <h3>14. Viva Voce Preparation Guide (Sample Questions & Answers)</h3>
+                <div class="viva-qa-list">
+                  <div class="viva-item">
+                    <strong>Q1: Why did you use classes in JavaScript if it's a prototype-based language?</strong>
+                    <p><em>Answer:</em> ES6 introduced syntactic sugar for classes over prototype inheritance. This provides clearer encapsulation, constructor syntax, inheritance via <code>extends</code> and <code>super()</code>, making code modular, maintainable, and aligned with standard OOP design.</p>
+                  </div>
+                  <div class="viva-item">
+                    <strong>Q2: How is Polymorphism demonstrated in your project?</strong>
+                    <p><em>Answer:</em> Both <code>Book</code> and <code>Student</code> inherit from base classes (<code>LibraryItem</code> and <code>Person</code>). They override methods such as <code>getDetails()</code> and <code>getRole()</code>. When invoked on any entity, JavaScript executes the subclass's specific implementation at runtime.</p>
+                  </div>
+                  <div class="viva-item">
+                    <strong>Q3: How does LocalStorage store objects?</strong>
+                    <p><em>Answer:</em> LocalStorage only accepts string key-value pairs. We use <code>JSON.stringify()</code> to serialize our objects before saving, and <code>JSON.parse()</code> combined with static factory methods (e.g. <code>Book.fromJSON()</code>) to rehydrate class instances upon page load.</p>
+                  </div>
+                  <div class="viva-item">
+                    <strong>Q4: How does the Computer Graphics transformation matrix work in 2D?</strong>
+                    <p><em>Answer:</em> A 2D point \((x, y)\) is expressed in homogeneous coordinates as \([x, y, 1]\). We multiply this vector with a \(3 \times 3\) transformation matrix combining Translation, Rotation, and Scaling into a single composite matrix.</p>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+        </section>
+
+      </div><!-- /.content-container -->
+    </main>
+  </div><!-- /.app-layout -->
+
+
+  <!-- ==========================================
+       MODALS
+       ========================================== -->
+
+  <!-- Modal: Add / Edit Book -->
+  <div class="modal-overlay" id="bookModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="bookModalTitle"><i class="fa-solid fa-book"></i> Add New Book</h3>
+        <button class="modal-close" data-modal-close="bookModal">&times;</button>
+      </div>
+      <form id="bookForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="bookFormMode" value="add">
+          
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="bookIdInput" class="form-label">Book ID <span class="required">*</span></label>
+              <input type="text" id="bookIdInput" class="form-control" placeholder="e.g. BK-101" required>
+              <small class="form-help">Must be unique (e.g. BK-101)</small>
+            </div>
+            <div class="form-group col-6">
+              <label for="bookIsbnInput" class="form-label">ISBN <span class="required">*</span></label>
+              <input type="text" id="bookIsbnInput" class="form-control" placeholder="e.g. 978-0131103627" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bookTitleInput" class="form-label">Book Title <span class="required">*</span></label>
+            <input type="text" id="bookTitleInput" class="form-control" placeholder="e.g. Object-Oriented Programming with C++" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="bookAuthorInput" class="form-label">Author Name <span class="required">*</span></label>
+              <input type="text" id="bookAuthorInput" class="form-control" placeholder="e.g. E. Balagurusamy" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="bookPublisherInput" class="form-label">Publisher</label>
+              <input type="text" id="bookPublisherInput" class="form-control" placeholder="e.g. McGraw Hill Education">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="bookCategorySelect" class="form-label">Category <span class="required">*</span></label>
+              <select id="bookCategorySelect" class="form-control" required>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Object Oriented Programming">Object Oriented Programming</option>
+                <option value="Computer Graphics">Computer Graphics</option>
+                <option value="Data Structures">Data Structures</option>
+                <option value="Mathematics">Discrete Mathematics</option>
+                <option value="Computer Architecture">Computer Architecture</option>
+                <option value="General Engineering">General Engineering</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="bookCopiesInput" class="form-label">Total Copies <span class="required">*</span></label>
+              <input type="number" id="bookCopiesInput" class="form-control" min="1" max="100" value="5" required>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close="bookModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveBook">
+            <i class="fa-solid fa-floppy-disk"></i> Save Book Record
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Modal: Add / Edit Student -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="studentModalTitle"><i class="fa-solid fa-user-graduate"></i> Register New Student</h3>
+        <button class="modal-close" data-modal-close="studentModal">&times;</button>
+      </div>
+      <form id="studentForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="studentFormMode" value="add">
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="studentIdInput" class="form-label">Student ID <span class="required">*</span></label>
+              <input type="text" id="studentIdInput" class="form-control" placeholder="e.g. STU-201" required>
+              <small class="form-help">Unique ID (e.g. STU-201)</small>
+            </div>
+            <div class="form-group col-6">
+              <label for="studentPrnInput" class="form-label">Student PRN <span class="required">*</span></label>
+              <input type="text" id="studentPrnInput" class="form-control" placeholder="e.g. 72145892K" required>
+              <small class="form-help">Permanent Registration No.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="studentNameInput" class="form-label">Full Name <span class="required">*</span></label>
+            <input type="text" id="studentNameInput" class="form-control" placeholder="e.g. Aarav Sharma" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="studentDeptSelect" class="form-label">Department <span class="required">*</span></label>
+              <select id="studentDeptSelect" class="form-control" required>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="AI & Data Science">AI & Data Science</option>
+                <option value="Electronics & Telecommunication">E&TC</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="studentYearSelect" class="form-label">Academic Year <span class="required">*</span></label>
+              <select id="studentYearSelect" class="form-control" required>
+                <option value="SE">SE (Second Year)</option>
+                <option value="TE">TE (Third Year)</option>
+                <option value="BE">BE (Final Year)</option>
+                <option value="FE">FE (First Year)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="studentEmailInput" class="form-label">Email Address <span class="required">*</span></label>
+              <input type="email" id="studentEmailInput" class="form-control" placeholder="aarav@college.edu.in" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="studentPhoneInput" class="form-label">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="studentPhoneInput" class="form-control" placeholder="9876543210" required>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close="studentModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveStudent">
+            <i class="fa-solid fa-floppy-disk"></i> Save Student Record
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Modal: Confirmation Dialog -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="modal-header modal-header-danger">
+        <h3 id="confirmModalTitle"><i class="fa-solid fa-triangle-exclamation"></i> Confirm Action</h3>
+        <button class="modal-close" data-modal-close="confirmModal">&times;</button>
+      </div>
+      <div class="modal-body text-center p-4">
+        <div class="confirm-icon"><i class="fa-solid fa-trash-can"></i></div>
+        <h4 id="confirmHeading">Are you sure?</h4>
+        <p id="confirmMessage" class="text-muted">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-modal-close="confirmModal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmAction">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal: Return Receipt -->
+  <div class="modal-overlay" id="receiptModal">
+    <div class="modal-dialog">
+      <div class="modal-header modal-header-success">
+        <h3><i class="fa-solid fa-circle-check"></i> Book Returned Successfully</h3>
+        <button class="modal-close" data-modal-close="receiptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-card">
+          <div class="receipt-header">
+            <h4>Central Library Circulation Receipt</h4>
+            <span id="receiptTxnId">TXN-0000</span>
+          </div>
+          <div class="receipt-body">
+            <div class="receipt-row">
+              <span>Book Title:</span>
+              <strong id="receiptBookTitle">-</strong>
+            </div>
+            <div class="receipt-row">
+              <span>Student Name:</span>
+              <strong id="receiptStudent">-</strong>
+            </div>
+            <div class="receipt-row">
+              <span>Issue Date:</span>
+              <span id="receiptIssueDate">-</span>
+            </div>
+            <div class="receipt-row">
+              <span>Due Date:</span>
+              <span id="receiptDueDate">-</span>
+            </div>
+            <div class="receipt-row">
+              <span>Actual Return Date:</span>
+              <span id="receiptReturnDate">-</span>
+            </div>
+            <div class="receipt-row">
+              <span>Overdue Days:</span>
+              <strong id="receiptOverdueDays">0 days</strong>
+            </div>
+            <div class="receipt-total-row">
+              <span>Total Fine Collected:</span>
+              <span class="fine-badge" id="receiptFineAmount">₹0.00</span>
+            </div>
+          </div>
+          <div class="receipt-footer">
+            <small>Book inventory has been automatically incremented. Thank you!</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-block" data-modal-close="receiptModal">
+          <i class="fa-solid fa-check"></i> Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Floating Toast Notifications Stack -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
